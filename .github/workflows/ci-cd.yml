@@ -37,8 +37,19 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Upload dump file as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: database-dump
+        path: ./dump/db_contractsimsppob.dump
+
+    - name: Download dump file
+      uses: actions/download-artifact@v3
+      with:
+        name: database-dump
+
     - name: Deploy to Neon
       run: |
-        pg_restore -h ${{ secrets.NEON_DB_HOST }} -U ${{ secrets.NEON_DB_USER }} -d ${{ secrets.NEON_DB_NAME }} -v "C:\Users\agustibayusamudro\dump\db_contractsimsppob.dump"
+        pg_restore -h ${{ secrets.NEON_DB_HOST }} -U ${{ secrets.NEON_DB_USER }} -d ${{ secrets.NEON_DB_NAME }} -v "./db_contractsimsppob.dump"
       env:
         NEON_DB_PASSWORD: ${{ secrets.NEON_DB_PASSWORD }}
