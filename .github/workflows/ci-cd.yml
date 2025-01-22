@@ -50,6 +50,9 @@ jobs:
 
     - name: Deploy to Neon
       run: |
-        pg_restore -h ${{ secrets.NEON_DB_HOST }} -U ${{ secrets.NEON_DB_USER }} -d ${{ secrets.NEON_DB_NAME }} -v "./db_contractsimsppob.dump"
+        pg_restore --host=${{ secrets.NEON_DB_HOST }} \
+                   --username=${{ secrets.NEON_DB_USER }} \
+                   --dbname=${{ secrets.NEON_DB_NAME }} \
+                   --verbose ./db_contractsimsppob.dump
       env:
-        NEON_DB_PASSWORD: ${{ secrets.NEON_DB_PASSWORD }}
+        PGPASSWORD: ${{ secrets.NEON_DB_PASSWORD }}
