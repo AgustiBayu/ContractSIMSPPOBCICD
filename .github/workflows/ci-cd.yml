@@ -48,14 +48,14 @@ jobs:
           # Update package lists
           sudo apt-get update
 
-          # Install PostgreSQL client (version 15)
-          sudo apt-get install -y postgresql-client-15
+          # Install PostgreSQL client (version 17.0)
+          sudo apt-get install -y postgresql-client-17.0
 
       - name: Download dump file from repository
         run: |
           mkdir -p ./dump
-          if [ ! -f ./dump/db_contractsimsppob.sql ]; then
-            cp ./dump/db_contractsimsppob.sql ./dump/
+          if [ ! -f ./dump/db_contractsimsppob.dump ]; then
+            cp ./dump/db_contractsimsppob.dump ./dump/
           else
             echo "File already exists, skipping copy"
           fi
@@ -71,4 +71,4 @@ jobs:
                      --clean \
                      --if-exists \
                      --verbose \
-                     ./dump/db_contractsimsppob.sql
+                     ./dump/db_contractsimsppob.dump
