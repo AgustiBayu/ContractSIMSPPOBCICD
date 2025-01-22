@@ -63,4 +63,4 @@ jobs:
                       --clean \
                       --if-exists \
                       --verbose \
-                      ./dump/db_contractsimsppob.dump
+                      ./dump/db_contractsimsppob.sql
