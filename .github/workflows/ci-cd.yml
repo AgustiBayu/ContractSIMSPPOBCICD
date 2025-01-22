@@ -30,29 +30,40 @@ jobs:
       run: go test -v ./...
 
   deploy:
-    runs-on: ubuntu-latest
     needs: build
-
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Upload dump file as artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: database-dump
-        path: ./dump/db_contractsimsppob.dump
+      - name: Install PostgreSQL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
 
-    - name: Download dump file
-      uses: actions/download-artifact@v3
-      with:
-        name: database-dump
+      - name: Upload dump file
+        uses: actions/upload-artifact@v3
+        with:
+          name: database-dump
+          path: ./dump/db_contractsimsppob.dump
 
-    - name: Deploy to Neon
-      run: |
-        pg_restore --host=${{ secrets.NEON_DB_HOST }} \
-                   --username=${{ secrets.NEON_DB_USER }} \
-                   --dbname=${{ secrets.NEON_DB_NAME }} \
-                   --verbose ./db_contractsimsppob.dump
-      env:
-        PGPASSWORD: ${{ secrets.NEON_DB_PASSWORD }}
+      - name: Download dump file
+        uses: actions/download-artifact@v3
+        with:
+          name: database-dump
+          path: ./dump
+
+      - name: Deploy to Neon
+        env:
+          PGPASSWORD: ${{ secrets.NEON_DB_PASSWORD }}
+        run: |
+          pg_restore --host=${{ secrets.NEON_DB_HOST }} \
+                    --username=${{ secrets.NEON_DB_USER }} \
+                    --dbname=${{ secrets.NEON_DB_NAME }} \
+                    --no-owner \
+                    --clean \
+                    --if-exists \
+                    --verbose \
+                    ./dump/db_contractsimsppob.dump
