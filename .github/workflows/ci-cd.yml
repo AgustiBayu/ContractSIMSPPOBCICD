@@ -11,39 +11,41 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: '1.23'  # Versi Go yang digunakan
-
-    - name: Install dependencies
-      run: |
-        go mod tidy
-        go build -v ./...
-
-    - name: Run tests
-      run: go test -v ./...
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.23'  # Versi Go yang digunakan
+      - name: Install dependencies
+        run: |
+          go mod tidy
+          go build -v ./...
+      - name: Run tests
+        run: go test -v ./...
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install PostgreSQL 17 client
+      - name: Install PostgreSQL client
         run: |
+          # Update the repository list to use the correct PostgreSQL APT repository
           sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -c | awk "{print $2}")-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          
+          # Add the PostgreSQL repository key
           curl --silent https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+          
+          # Update package lists
           sudo apt-get update
-          sudo apt-get install -y postgresql-client-17
+
+          # Install PostgreSQL client (version 15 or another available version)
+          sudo apt-get install -y postgresql-client-15  # You can change to another version if needed
 
       - name: Download dump file from repository
         run: |
@@ -59,10 +61,10 @@ jobs:
           PGPASSWORD: ${{ secrets.NEON_DB_PASSWORD }}
         run: |
           pg_restore --host=${{ secrets.NEON_DB_HOST }} \
-                      --username=${{ secrets.NEON_DB_USER }} \
-                      --dbname=${{ secrets.NEON_DB_NAME }} \
-                      --no-owner \
-                      --clean \
-                      --if-exists \
-                      --verbose \
-                      ./dump/db_contractsimsppob.sql
+                     --username=${{ secrets.NEON_DB_USER }} \
+                     --dbname=${{ secrets.NEON_DB_NAME }} \
+                     --no-owner \
+                     --clean \
+                     --if-exists \
+                     --verbose \
+                     ./dump/db_contractsimsppob.sql
