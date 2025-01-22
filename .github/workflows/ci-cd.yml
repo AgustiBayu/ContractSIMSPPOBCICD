@@ -46,8 +46,8 @@ jobs:
       - name: Download dump file from repository
         run: |
           mkdir -p ./dump
-          if [ ! -f ./dump/db_contractsimsppob.dump ]; then
-            cp ./dump/db_contractsimsppob.dump ./dump/
+          if [ ! -f ./dump/db_contractsimsppob.sql ]; then
+            cp ./dump/db_contractsimsppob.sql ./dump/
           else
             echo "File already exists, skipping copy"
           fi
