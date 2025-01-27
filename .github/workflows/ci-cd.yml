@@ -22,20 +22,13 @@ jobs:
         run: |
           go mod tidy
           go build -v ./...
-
+        
       - name: Run tests
-        run: go test -v ./...
-      - name: Run unit tests
-        run: go test -v ./...  # Jalankan unit tests untuk seluruh package
-
-      - name: Run tests with coverage
-        run: go test -coverprofile=coverage.out ./...  # Menambahkan coverage untuk pengujian
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-report
-          path: coverage.out
-
-      - name: Clean up
-        run: rm coverage.out  # Bersihkan file coverage setelah selesai
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
+        run: |
+          go test -v ./...
