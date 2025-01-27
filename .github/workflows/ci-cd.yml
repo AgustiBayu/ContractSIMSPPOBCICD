@@ -21,6 +21,7 @@ jobs:
         with:
           go-version: '1.23'
 
+      # Mengatur variabel lingkungan dari GitHub Secrets
       - name: Set environment variables from secrets
         env:
           DB_USER: ${{ secrets.DB_USER }}

@@ -1,6 +1,7 @@
 package app
 
 import (
+	"os"
 	"testing"
 
 	"github.com/joho/godotenv"
@@ -8,13 +9,16 @@ import (
 )
 
 func TestNewDB(t *testing.T) {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		t.Fatal("Error loading .env file")
+	if os.Getenv("DB_USER") == "" {
+		// Ini untuk testing lokal, baca variabel dari .env
+		err := godotenv.Load("../.env")
+		if err != nil {
+			t.Fatal("Error loading .env file")
+		}
 	}
 	db := NewDB()
 	assert.NotNil(t, db, "database is null")
-	err = db.Ping()
+	err := db.Ping()
 	assert.NoError(t, err, "Database connection should be successful")
 	defer func() {
 		err := db.Close()
