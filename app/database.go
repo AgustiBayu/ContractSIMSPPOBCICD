@@ -7,21 +7,21 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
 func NewDB() *sql.DB {
+	err := godotenv.Load("../.env")
+	if err != nil {
+		panic(err)
+	}
+
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASS")
 	dbHost := os.Getenv("DB_HOST")
 	dbName := os.Getenv("DB_NAME")
 	dbSslmode := os.Getenv("DB_SSLMODE")
-
-	fmt.Println("DB_USER:", dbUser)
-	fmt.Println("DB_PASS:", dbPass)
-	fmt.Println("DB_HOST:", dbHost)
-	fmt.Println("DB_NAME:", dbName)
-	fmt.Println("DB_SSLMODE:", dbSslmode)
 
 	if dbUser == "" || dbPass == "" || dbHost == "" || dbName == "" || dbSslmode == "" {
 		panic("Missing required database environment variables")
