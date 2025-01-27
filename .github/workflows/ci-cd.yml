@@ -9,20 +9,23 @@ on:
       - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: '1.23'  # Versi Go yang digunakan
+          go-version: '1.23'
+
       - name: Install dependencies
         run: |
           go mod tidy
           go build -v ./...
-        
+       
       - name: Run tests
         env:
           DB_USER: ${{ secrets.DB_USER }}
@@ -31,4 +34,16 @@ jobs:
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
         run: |
-          go test -v ./...
+          go test -v -count=1 ./...
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: go build -v ./...
