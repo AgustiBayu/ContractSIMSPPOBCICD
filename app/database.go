@@ -17,6 +17,12 @@ func NewDB() *sql.DB {
 	dbName := os.Getenv("DB_NAME")
 	dbSslmode := os.Getenv("DB_SSLMODE")
 
+	fmt.Println("DB_USER:", dbUser)
+	fmt.Println("DB_PASS:", dbPass)
+	fmt.Println("DB_HOST:", dbHost)
+	fmt.Println("DB_NAME:", dbName)
+	fmt.Println("DB_SSLMODE:", dbSslmode)
+
 	if dbUser == "" || dbPass == "" || dbHost == "" || dbName == "" || dbSslmode == "" {
 		panic("Missing required database environment variables")
 	}
