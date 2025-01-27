@@ -8,13 +8,9 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
-
-	"github.com/joho/godotenv"
 )
 
 func NewDB() *sql.DB {
-	err := godotenv.Load("../.env")
-	helper.PanicIfError(err)
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASS")
 	dbHost := os.Getenv("DB_HOST")
