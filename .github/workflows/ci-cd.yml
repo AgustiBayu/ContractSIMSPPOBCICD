@@ -21,7 +21,6 @@ jobs:
         with:
           go-version: '1.23'
 
-      # Mengatur variabel lingkungan dari GitHub Secrets
       - name: Set environment variables from secrets
         env:
           DB_USER: ${{ secrets.DB_USER }}
@@ -33,6 +32,14 @@ jobs:
 
       - name: Install dependencies
         run: go mod tidy
+
+      - name: Verify Environment Variables
+        run: |
+          echo "DB_USER: $DB_USER"
+          echo "DB_PASS: $DB_PASS"
+          echo "DB_HOST: $DB_HOST"
+          echo "DB_NAME: $DB_NAME"
+          echo "DB_SSLMODE: $DB_SSLMODE"
 
       - name: Run Unit Tests
         run: go test ./... -v
