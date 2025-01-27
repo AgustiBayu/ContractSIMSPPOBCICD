@@ -22,7 +22,7 @@ jobs:
         run: |
           go mod tidy
           go build -v ./...
-          
+
       - name: Run tests
         run: go test -v ./...
       - name: Run unit tests
@@ -32,7 +32,7 @@ jobs:
         run: go test -coverprofile=coverage.out ./...  # Menambahkan coverage untuk pengujian
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: coverage-report
           path: coverage.out
