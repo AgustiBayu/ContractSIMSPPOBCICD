@@ -10,37 +10,22 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Menjalankan di mesin Ubuntu
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout Code
+        uses: actions/checkout@v3  # Checkout kode dari repository
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4  # Setup Go environment
         with:
-          go-version: '1.23' # Versi Go yang digunakan
-
-      - name: Create .env file
-        run: |
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          echo "DB_PASS=${{ secrets.DB_PASS }}" >> .env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_SSLMODE=${{ secrets.DB_SSLMODE }}" >> .env
+          go-version: '1.23'  # Versi Go yang digunakan
 
       - name: Install dependencies
-        run: |
-          go mod tidy
-          go build -v ./...
+        run: go mod tidy  # Menginstal dependensi
 
-      - name: Run tests
-        env:
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASS: ${{ secrets.DB_PASS }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
-        run: |
-          # Pastikan perintah ini berhasil jika menggunakan file .env
-          go test -v -count=1 ./...
+      - name: Run Unit Tests
+        run: go test ./... -v  # Menjalankan semua unit test dengan output verbose
+
+      - name: Build application
+        run: go build -o app .  # Build aplikasi
