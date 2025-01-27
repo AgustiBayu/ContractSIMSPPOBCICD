@@ -10,22 +10,31 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Menjalankan di mesin Ubuntu
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3  # Checkout kode dari repository
+        uses: actions/checkout@v3
 
       - name: Set up Go
-        uses: actions/setup-go@v4  # Setup Go environment
+        uses: actions/setup-go@v4
         with:
-          go-version: '1.23'  # Versi Go yang digunakan
+          go-version: '1.23'
+
+      - name: Set environment variables from secrets
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
+        run: echo "Environment variables set for testing"
 
       - name: Install dependencies
-        run: go mod tidy  # Menginstal dependensi
+        run: go mod tidy
 
       - name: Run Unit Tests
-        run: go test ./... -v  # Menjalankan semua unit test dengan output verbose
+        run: go test ./... -v
 
       - name: Build application
-        run: go build -o app .  # Build aplikasi
+        run: go build -o app .

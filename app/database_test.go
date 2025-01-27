@@ -10,7 +10,7 @@ import (
 func TestNewDB(t *testing.T) {
 	err := godotenv.Load("../.env")
 	if err != nil {
-		panic(err)
+		t.Fatal("Error loading .env file")
 	}
 	db := NewDB()
 	assert.NotNil(t, db, "database is null")
