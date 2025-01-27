@@ -1,7 +1,6 @@
 package app
 
 import (
-	"ContractSIMSPPOBCICD/helper"
 	"testing"
 
 	"github.com/joho/godotenv"
@@ -10,7 +9,9 @@ import (
 
 func TestNewDB(t *testing.T) {
 	err := godotenv.Load("../.env")
-	helper.PanicIfError(err)
+	if err != nil {
+		panic(err)
+	}
 	db := NewDB()
 	assert.NotNil(t, db, "database is null")
 	err = db.Ping()
