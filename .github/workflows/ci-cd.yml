@@ -22,53 +22,20 @@ jobs:
         run: |
           go mod tidy
           go build -v ./...
+          
       - name: Run tests
         run: go test -v ./...
+      - name: Run unit tests
+        run: go test -v ./...  # Jalankan unit tests untuk seluruh package
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Run tests with coverage
+        run: go test -coverprofile=coverage.out ./...  # Menambahkan coverage untuk pengujian
 
-      - name: Install PostgreSQL client
-        run: |
-          # Use correct codename for Ubuntu 24.04 (jammy)
-          CODENAME=$(lsb_release -c | awk '{print $2}')
-          echo "Using codename: $CODENAME"
-          
-          # Add PostgreSQL APT repository based on codename
-          sudo sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ $CODENAME-pgdg main' > /etc/apt/sources.list.d/pgdg.list"
-          
-          # Add the PostgreSQL repository key
-          curl --silent https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-          
-          # Update package lists
-          sudo apt-get update
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: coverage.out
 
-          # Install PostgreSQL client (version 17)
-          sudo apt-get install -y postgresql-client-17
-
-      - name: Download dump file from repository
-        run: |
-          mkdir -p ./dump
-          if [ ! -f ./dump/db_contractsimsppob.dump ]; then
-            cp ./dump/db_contractsimsppob.dump ./dump/
-          else
-            echo "File already exists, skipping copy"
-          fi
-
-      - name: Deploy to Neon
-        env:
-          PGPASSWORD: ${{ secrets.NEON_DB_PASSWORD }}
-        run: |
-          pg_restore --host=${{ secrets.NEON_DB_HOST }} \
-                     --username=${{ secrets.NEON_DB_USER }} \
-                     --dbname=${{ secrets.NEON_DB_NAME }} \
-                     --no-owner \
-                     --clean \
-                     --if-exists \
-                     --verbose \
-                     ./dump/db_contractsimsppob.dump
+      - name: Clean up
+        run: rm coverage.out  # Bersihkan file coverage setelah selesai
