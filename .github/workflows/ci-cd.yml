@@ -29,10 +29,8 @@ jobs:
           DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
         run: echo "Environment variables set for testing"
 
-      # - name: Verify Environment Variables
-      #   run: |
-      #     echo "DB_USER: $DB_USER"
-      #     echo "DB_PASS: $DB_PASS"
-      #     echo "DB_HOST: $DB_HOST"
-      #     echo "DB_NAME: $DB_NAME"
-      #     echo "DB_SSLMODE: $DB_SSLMODE"
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Run Unit Tests
+        run: go test ./... -v
